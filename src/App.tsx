@@ -1,8 +1,18 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import {
+  IonApp,
+  IonIcon,
+  IonRouterOutlet,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+  setupIonicReact
+} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import Home from './pages/Home';
+import { newspaperOutline, informationCircleOutline } from 'ionicons/icons';
+import Tab1 from './pages/Tab1';
+import Tab2 from './pages/Tab2';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -28,14 +38,27 @@ setupIonicReact();
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/home">
-          <Home />
-        </Route>
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
-      </IonRouterOutlet>
+      <IonTabs>
+        <IonRouterOutlet>
+          <Route exact path="/tab1">
+            <Tab1 />
+          </Route>
+          <Route exact path="/tab2">
+            <Tab2 />
+          </Route>
+          <Route exact path="/">
+            <Redirect to="/tab1" />
+          </Route>
+        </IonRouterOutlet>
+        <IonTabBar slot="bottom">
+          <IonTabButton tab="tab1" href="/tab1">
+            <IonIcon aria-hidden="true" icon={newspaperOutline} />
+          </IonTabButton>
+          <IonTabButton tab="tab2" href="/tab2">
+            <IonIcon aria-hidden="true" icon={informationCircleOutline} />
+          </IonTabButton>
+        </IonTabBar>
+      </IonTabs>
     </IonReactRouter>
   </IonApp>
 );

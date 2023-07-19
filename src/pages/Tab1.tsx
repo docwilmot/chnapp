@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { IonContent, IonPage, IonHeader, IonNote, IonToolbar, IonText, IonTitle, IonList, IonItem, IonAvatar, IonLabel, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
+import { IonContent, IonIcon, IonPage, IonHeader, IonNote, IonToolbar, IonText, IonTitle, IonList, IonItem, IonAvatar, IonLabel, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/react';
+import './Tab1.css';
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser';
-import './Home.css';
+import { sunnySharp } from 'ionicons/icons';
 
-const Home: React.FC = () => {
-  const [items, setItems] = useState<any>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const Tab1: React.FC = () => {
+  const [items, setItems] = useState<{node: Record<string, string>}[]>([]);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState('');
   const [page, setPage] = useState(1);
   const newURL = 'http://chn.localhost/post-feeds-json?page='+page
 
@@ -17,13 +18,14 @@ const Home: React.FC = () => {
           setLoading(true);
           const response = await fetch(newURL);
           const json = await response.json();
-          setItems((prev: any) => [...prev, ...json.nodes]);
-          console.log(json.nodes)
+          setItems((prev: {node: Record<string, string>}[]) => [...prev, ...json.nodes]);
           setPage(page+1);
-          setError(null);
+          setError('');
           setLoading(false);
-        } catch (error: any) {
-          setError(error);
+        } catch (error: unknown) {
+          if (typeof(error) == 'string') {
+            setError(error);
+          }
           setLoading(false);
         }
       };
@@ -65,21 +67,24 @@ const Home: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Caribbean health news</IonTitle>
+        <IonToolbar class="ion-margin-horizontal">
+          <IonIcon slot="start" color="warning" aria-hidden="true" icon={sunnySharp} />
+          <IonTitle>Caribbean news</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonList>
-          {items.map((item: any, index: any) => (
+          {
+          // eslint-disable-next-line
+          items.map((item: any, index: number) => (
             <IonItem  onClick={() => openBrowser(item.node.field_feed_url)}  key={'item'+index}>
               <IonAvatar slot="start">
                 <img src={item.node.field_image_url ? item.node.field_image_url : 'https://picsum.photos/80/80?random=' + index} alt="avatar" />
               </IonAvatar>
-              <IonLabel className="ion-text-wrap">
+              <IonLabel>
                 <IonNote>{ item.node.field_feed_source }</IonNote>
                 <IonText><h2 className="ion-no-margin"><strong>{item.node.title}</strong></h2></IonText>
-                <IonText><p>{ convertStringToHTML(item.node.body) }</p></IonText>
+                <IonText><p className="ion-text-wrap">{ convertStringToHTML(item.node.body) }</p></IonText>
               </IonLabel>
             </IonItem>
           ))}
@@ -94,7 +99,10 @@ const Home: React.FC = () => {
         </IonInfiniteScroll>
       </IonContent>
   </IonPage>
-  );
+ );
+
+
+
 };
 
-export default Home;
+export default Tab1;
